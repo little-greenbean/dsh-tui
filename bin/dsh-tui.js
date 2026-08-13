@@ -3,7 +3,7 @@
 // to `dsh --profile tui`. Dependency-free; anything after `dsh-tui` on the
 // command line is passed straight through to `dsh`.
 import { spawn, spawnSync } from 'node:child_process';
-import { accessSync, constants as fsConstants } from 'node:fs';
+import { accessSync, readFileSync, writeFileSync, constants as fsConstants } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 
@@ -11,12 +11,10 @@ const PROFILE = 'tui';
 const PROFILE_DIR = path.join(os.homedir(), '.dsh', 'profiles', PROFILE);
 const PROFILE_PKG = path.join(PROFILE_DIR, 'package.json');
 
-// Bundles the profile needs. `dsh-tui`'s cordis.patch.yml composes over the
-// base + headless bundles, so both must be present in the profile stack.
-const BOOTSTRAP_STEPS = [
-  ['dsh', ['plugin', '--profile', PROFILE, 'add', '@deepseek-ai/dsh-headless']],
-  ['dsh', ['plugin', '--profile', PROFILE, 'add', 'dsh-tui']],
-];
+// In-box bundles come from the dsh installation itself (never fetched from
+// npm), so headless is added to the profile's bundle list directly rather than
+// via `dsh plugin add` (which would fetch a stale npm copy).
+const HEADLESS_BUNDLE = '@deepseek-ai/dsh-headless';
 
 // Check whether a command is available on PATH without executing it.
 function hasCommand(cmd) {
@@ -26,7 +24,7 @@ function hasCommand(cmd) {
     : [''];
   for (const dir of dirs) {
     for (const ext of exts) {
-      const candidate = path.join(dir, cmd + ext.toLowerCase());
+      const candidate = path.join(dir, cmd + ext);
       try {
         accessSync(candidate, fsConstants.X_OK);
         return candidate;
@@ -38,18 +36,37 @@ function hasCommand(cmd) {
   return null;
 }
 
-// Run the bootstrap steps, inheriting stdio so pnpm/dsh output is visible.
-function bootstrap() {
-  for (const [cmd, args] of BOOTSTRAP_STEPS) {
-    const res = spawnSync(cmd, args, { stdio: 'inherit' });
-    if (res.error) {
-      console.error(`dsh-tui: failed to run \`${cmd} ${args.join(' ')}\`: ${res.error.message}`);
-      process.exit(1);
-    }
-    if (res.status !== 0) {
-      process.exit(res.status ?? 1);
-    }
+// Run one command, inheriting stdio so pnpm/dsh output is visible.
+function run(cmd, args) {
+  const res = spawnSync(cmd, args, { stdio: 'inherit' });
+  if (res.error) {
+    console.error(`dsh-tui: failed to run \`${cmd} ${args.join(' ')}\`: ${res.error.message}`);
+    process.exit(1);
   }
+  if (res.status !== 0) {
+    process.exit(res.status ?? 1);
+  }
+}
+
+// Ensure `@deepseek-ai/dsh-headless` is in the profile's bundle list, right
+// after base. Idempotent.
+function ensureHeadlessBundle() {
+  const pkg = JSON.parse(readFileSync(PROFILE_PKG, 'utf8'));
+  const bundles = pkg.dsh?.profile?.bundles ?? [];
+  if (bundles.includes(HEADLESS_BUNDLE)) return;
+  const baseIdx = bundles.indexOf('@deepseek-ai/dsh-base');
+  const insertAt = baseIdx >= 0 ? baseIdx + 1 : bundles.length;
+  bundles.splice(insertAt, 0, HEADLESS_BUNDLE);
+  pkg.dsh = { ...pkg.dsh, profile: { ...pkg.dsh?.profile, bundles } };
+  writeFileSync(PROFILE_PKG, JSON.stringify(pkg, null, 2) + '\n');
+}
+
+// First run: create the `tui` profile (adds base + dsh-tui as a dependency),
+// then wire in the in-box headless bundle.
+function bootstrap() {
+  console.log(`dsh-tui: bootstrapping the \`${PROFILE}\` profile (first run)...`);
+  run('dsh', ['plugin', '--profile', PROFILE, 'add', 'dsh-tui']);
+  ensureHeadlessBundle();
 }
 
 // --- main ---------------------------------------------------------------
@@ -60,13 +77,14 @@ if (!hasCommand('dsh')) {
   process.exit(127);
 }
 
-// First run: create the `tui` profile if it does not exist yet.
 try {
   accessSync(PROFILE_PKG, fsConstants.F_OK);
 } catch {
-  console.log(`dsh-tui: bootstrapping the \`${PROFILE}\` profile (first run)...`);
   bootstrap();
 }
+// Even when the profile already exists, keep the bundle list correct (covers a
+// manual setup that missed the headless layer).
+ensureHeadlessBundle();
 
 // Hand off to the harness. stdio is inherited so the child shares the TTY.
 const child = spawn('dsh', ['--profile', PROFILE, ...process.argv.slice(2)], {

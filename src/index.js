@@ -116,17 +116,15 @@ async function run(ctx, exit) {
   const cmdline = ctx.get('cmdlineArgs')
   const cli = parseCliArgs(cmdline?.get?.() ?? [])
 
-  if (cli.help) { process.stdout.write(CLI_HELP_TEXT + '\n'); exit(0); return }
-  if (cli.version) { process.stdout.write(`dsh-tui ${VERSION}\n`); exit(0); return }
+  if (cli.help) { process.stdout.write(CLI_HELP_TEXT + '\n'); process.exit(0) }
+  if (cli.version) { process.stdout.write(`dsh-tui ${VERSION}\n`); process.exit(0) }
   if (cli.listSessions) {
     if (persistence === undefined) {
       process.stderr.write('dsh-tui: session persistence is not available in this profile\n')
-      exit(1)
-      return
+      process.exit(1)
     }
     await listSessions(persistence)
-    exit(0)
-    return
+    process.exit(0)
   }
 
   // The mutable model selection: `/model` reassigns `current` so the NEXT turn
@@ -147,8 +145,7 @@ async function run(ctx, exit) {
           ? 'dsh-tui: no session to resume\n'
           : `dsh-tui: no session matching "${cli.resume}"\n`,
       )
-      exit(1)
-      return
+      process.exit(1)
     }
     const handle = await agents.resume({
       resumeSessionId: sessionId,
