@@ -1,0 +1,12 @@
+# dsh-tui profile patch — rides over @deepseek-ai/dsh-base + @deepseek-ai/dsh-headless.
+# Disables the headless one-shot runner/startup rows and inserts the tui runner.
+# Patch semantics (flattened, applied in order over the empty profile root):
+# a later patch can disable a row an earlier bundle inserted, and `insert`
+# appends after all earlier rows.
+- id: headless-startup
+  disabled: true
+- id: headless-runner
+  disabled: true
+- insert:
+    - id: tui-runner
+      name: 'dsh-tui'
