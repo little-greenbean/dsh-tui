@@ -1,0 +1,18 @@
+$ node --import tsx/esm apps/cli/src/bin.ts --profile tui
+
+                                          DeepSeek Harness
+                                ·  terminal AI chat, Claude-CLI style
+
+                           ┌─────────────────────────────────────────────┐
+                           │  model     deepseek-v4-flash                │
+                           │  directory ~/deepseek-harness               │
+                           │  commands  /help · /model · /clear · /exit  │
+                           └─────────────────────────────────────────────┘
+                              press /help for keys · ctrl + c to quit
+ > Ask anything
+ deepseek-v4-flash · ~/deepseek-harness                      ctrl+t hide   ↑↓ history   ctrl+c quit
+
+                                          DeepSeek Harness
+                                ·  terminal AI chat, Claude-CLI style
+
+                           ┌─────────────────────────────────────────────┐
