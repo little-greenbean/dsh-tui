@@ -132,6 +132,11 @@ async function run(ctx, exit) {
   // uses it (prompt assembly snapshots `current` into `assembled`).
   const selection = { current: defaultModel.currentSelection(), assembled: undefined }
 
+  // `--model <name>` overrides the default for this run.
+  if (cli.model != null) {
+    selection.current = { ...selection.current, model: cli.model }
+  }
+
   let agent
   if (cli.resume !== undefined) {
     if (persistence === undefined) {
