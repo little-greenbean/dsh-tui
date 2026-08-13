@@ -65,7 +65,7 @@ CLI flags (after `--profile tui` or passed through `dsh-tui`): `--resume <id>`, 
 
 ## Model & credentials
 
-The plugin uses the DeepSeek official provider (`deepseek-official`) with default model `deepseek-v4-flash`. The API key is read from the `DEEPSEEK_API_KEY` environment variable, or from `~/.dsh/.credentials.yaml` (mode 0600). No third-party gateway is involved.
+The TUI uses whatever model/provider the harness's `agent-default-model` resolves to — by default the DeepSeek official provider (`deepseek-official`) with model `deepseek-v4-flash`, overridable through the harness settings (e.g. `~/.dsh/settings.yaml`, or the Web UI). The API key is resolved through the harness's credential store: the `DEEPSEEK_API_KEY` environment variable, or `~/.dsh/.credentials.yaml` (mode 0600).
 
 ```bash
 export DEEPSEEK_API_KEY=sk-...

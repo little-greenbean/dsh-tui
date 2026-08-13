@@ -65,7 +65,7 @@ CLI 参数（在 `--profile tui` 之后，或经 `dsh-tui` 透传）：`--resume
 
 ## 模型与凭据
 
-插件使用 DeepSeek 官方 provider（`deepseek-official`），默认模型 `deepseek-v4-flash`。API key 从环境变量 `DEEPSEEK_API_KEY` 或 `~/.dsh/.credentials.yaml`（权限 0600）读取。不经过任何第三方网关。
+TUI 使用 harness 的 `agent-default-model` 解析到的模型/provider —— 默认是 DeepSeek 官方 provider（`deepseek-official`）与模型 `deepseek-v4-flash`，可通过 harness 设置覆盖（例如 `~/.dsh/settings.yaml` 或 Web UI）。API key 通过 harness 的凭据存储解析：环境变量 `DEEPSEEK_API_KEY` 或 `~/.dsh/.credentials.yaml`（权限 0600）。
 
 ```bash
 export DEEPSEEK_API_KEY=sk-...
