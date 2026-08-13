@@ -43,7 +43,7 @@ The kernel emits a `session/event` stream for the active session. `index.js` sub
 Two equivalent entry points converge on the same bootstrap:
 
 1. `dsh-tui` launcher (`bin/dsh-tui.js`): resolves `~/.dsh/profiles/tui`, bootstraps both bundles if `package.json` is missing, then spawns `dsh --profile tui` with inherited stdio and clean exit/signal forwarding.
-2. `scripts/install.sh`: checks Node >= 20 and `dsh` on PATH, runs the same two `dsh plugin add` steps, then prints the ready hint.
+2. `scripts/install.sh`: checks Node >= 20 and `dsh` on PATH, installs `dsh-tui` into the profile (npm first, GitHub fallback), wires the in-box `@deepseek-ai/dsh-headless` bundle into the profile's bundle list, then prints the ready hint.
 
 Both are idempotent — re-running the add step or re-running the launcher on an existing profile is a no-op.
 

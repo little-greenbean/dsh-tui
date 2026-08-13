@@ -36,16 +36,20 @@ function hasCommand(cmd) {
   return null;
 }
 
-// Run one command, inheriting stdio so pnpm/dsh output is visible.
-function run(cmd, args) {
+// Run one command, inheriting stdio so pnpm/dsh output is visible. Returns the
+// exit code instead of exiting, so the caller can fall back.
+function tryRun(cmd, args) {
   const res = spawnSync(cmd, args, { stdio: 'inherit' });
   if (res.error) {
     console.error(`dsh-tui: failed to run \`${cmd} ${args.join(' ')}\`: ${res.error.message}`);
-    process.exit(1);
+    return 127;
   }
-  if (res.status !== 0) {
-    process.exit(res.status ?? 1);
-  }
+  return res.status ?? 1;
+}
+
+function run(cmd, args) {
+  const code = tryRun(cmd, args);
+  if (code !== 0) process.exit(code);
 }
 
 // Ensure `@deepseek-ai/dsh-headless` is in the profile's bundle list, right
@@ -62,10 +66,15 @@ function ensureHeadlessBundle() {
 }
 
 // First run: create the `tui` profile (adds base + dsh-tui as a dependency),
-// then wire in the in-box headless bundle.
+// then wire in the in-box headless bundle. Prefers the npm package and falls
+// back to the GitHub URL until the npm package is published.
 function bootstrap() {
   console.log(`dsh-tui: bootstrapping the \`${PROFILE}\` profile (first run)...`);
-  run('dsh', ['plugin', '--profile', PROFILE, 'add', 'dsh-tui']);
+  const code = tryRun('dsh', ['plugin', '--profile', PROFILE, 'add', 'dsh-tui']);
+  if (code !== 0) {
+    console.log('dsh-tui: npm package not found yet — installing from GitHub...');
+    run('dsh', ['plugin', '--profile', PROFILE, 'add', 'github:little-greenbean/dsh-tui']);
+  }
   ensureHeadlessBundle();
 }
 
