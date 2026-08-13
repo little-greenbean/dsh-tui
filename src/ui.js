@@ -375,9 +375,19 @@ export function App({
       if (slash !== null) {
         setInput('')
         if (typeof onCommand === 'function') {
-          void Promise.resolve(onCommand(text)).catch((error) => {
-            pushStatus(`✗ ${error instanceof Error ? error.message : String(error)}`, true)
-          })
+          void Promise.resolve(onCommand(text))
+            .then((execution) => {
+              const result = execution?.result
+              if (result != null) {
+                if (result.kind === 'error') pushStatus(`✗ ${result.text}`, true)
+                else if (typeof result.text === 'string' && result.text !== '') pushStatus(result.text)
+              } else {
+                pushStatus(`unknown command: /${slash.name}`, true)
+              }
+            })
+            .catch((error) => {
+              pushStatus(`✗ ${error instanceof Error ? error.message : String(error)}`, true)
+            })
         } else {
           pushStatus(`unknown command: /${slash.name}`, true)
         }
