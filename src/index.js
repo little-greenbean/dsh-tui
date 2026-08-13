@@ -14,6 +14,7 @@ import { installModelSelection } from '@deepseek-ai/dsh-agent'
 import { SessionId } from '@deepseek-ai/dsh-session'
 import { probeTerminalBg } from './theme.js'
 import { parseCliArgs, CLI_HELP_TEXT } from './commands.js'
+import { createInitialState, reduce } from './events.js'
 import { App } from './ui.js'
 
 /** This package's version, read from its own manifest (source and packed layouts). */
@@ -166,6 +167,16 @@ async function run(ctx, exit) {
   // Events below this seq are construction seed history, not chat.
   const firstSeq = agent.session.seq
 
+  // On resume, replay the loaded history into the initial UI state so the
+  // prior conversation is visible as scrollback.
+  let initialState
+  if (cli.resume !== undefined) {
+    initialState = agent.session.events.reduce(
+      (state, event) => reduce(state, event, 0),
+      createInitialState(),
+    )
+  }
+
   // Intercept approval requests (tool/permission prompts) and answer via the
   // UI. Fail closed to `unavailable` when the UI cannot answer.
   ctx.on('approval/request', async (req, next) => {
@@ -232,6 +243,7 @@ async function run(ctx, exit) {
     React.createElement(App, {
       agent,
       firstSeq,
+      initialState,
       model: selection.current.model,
       themeBg,
       onEvent: forward,

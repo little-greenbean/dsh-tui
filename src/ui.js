@@ -250,10 +250,10 @@ function ApprovalPrompt({ pending, palette }) {
 
 /** App root: owns state, keys, composer, and the bottom-anchored viewport. */
 export function App({
-  agent, firstSeq = 0, model = '?', themeBg = null,
+  agent, firstSeq = 0, initialState, model = '?', themeBg = null,
   onEvent, onApproval, onInterrupt, onModelSwitch, onCommand, onExit,
 }) {
-  const [state, setState] = useState(createInitialState())
+  const [state, setState] = useState(initialState ?? createInitialState())
   const [input, setInput] = useState('')
   const [pending, setPending] = useState(null)
   const [thinkingOpen, setThinkingOpen] = useState(true)
