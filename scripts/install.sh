@@ -26,7 +26,7 @@ fi
 # --- bootstrap the tui profile -------------------------------------------
 echo "→ ensuring the tui profile is installed..."
 # Prefer the npm package; fall back to the GitHub URL until it is published.
-if ! dsh plugin --profile tui add dsh-tui 2>/dev/null; then
+if ! dsh plugin --profile tui add dsh-tui-cli 2>/dev/null; then
   echo "→ dsh-tui not on npm yet — installing from GitHub..."
   dsh plugin --profile tui add github:little-greenbean/dsh-tui
 fi

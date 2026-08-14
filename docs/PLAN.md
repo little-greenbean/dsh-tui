@@ -153,7 +153,7 @@ commands.js ─┘
 ### Phase 4 — 发布
 1. push + GitHub Actions CI 绿。
 2. `npm publish`（若包名可用）。
-3. README 写清两条部署路径：`dsh plugin --profile tui add dsh-tui && dsh --profile tui`，或 `curl -fsSL …/install.sh | sh`（一键）。
+3. README 写清两条部署路径：`dsh plugin --profile tui add dsh-tui-cli && dsh --profile tui`，或 `curl -fsSL …/install.sh | sh`（一键）。
 
 ### 心跳机制
 - 全程用 **Cron 心跳**（每 ~20 分钟）检查对话/任务状态，subagent 完成通知即时回收；失败任务重新分派。任务持续运行直到 Phase 4 完成。

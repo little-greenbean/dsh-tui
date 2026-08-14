@@ -1,11 +1,11 @@
 {
-  "name": "dsh-tui",
+  "name": "dsh-tui-cli",
   "version": "0.1.0",
   "description": "Claude-CLI-style terminal chat for DeepSeek Harness (dsh) — a thin Ink plugin installed via `dsh plugin`.",
   "type": "module",
   "main": "src/index.js",
   "bin": {
-    "dsh-tui": "./bin/dsh-tui.js"
+    "dsh-tui": "bin/dsh-tui.js"
   },
   "exports": {
     ".": "./src/index.js",

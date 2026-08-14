@@ -22,7 +22,7 @@ Requires Node.js ≥ 20 and the harness CLI on PATH (`npm install -g @deepseek-a
 
 ```bash
 npm install -g @deepseek-ai/dsh    # the harness (skip if already installed)
-npm install -g dsh-tui             # this plugin; provides the `dsh-tui` command
+npm install -g dsh-tui-cli           # this plugin; provides the `dsh-tui` command
 dsh-tui                            # auto-bootstraps the `tui` profile, then runs
 ```
 

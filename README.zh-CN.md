@@ -22,7 +22,7 @@
 
 ```bash
 npm install -g @deepseek-ai/dsh    # harness（如已安装可跳过）
-npm install -g dsh-tui             # 本插件；提供 `dsh-tui` 命令
+npm install -g dsh-tui-cli             # 本插件；提供 `dsh-tui` 命令
 dsh-tui                            # 首次运行自动初始化 `tui` profile，然后启动
 ```
 

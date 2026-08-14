@@ -4,7 +4,7 @@
 
 ## The plugin / patch model
 
-A `dsh` profile is a stack of bundle patch layers under `~/.dsh/profiles/<name>`. Installing a package into a profile (`dsh plugin --profile tui add dsh-tui`) forwards to pnpm in that profile directory. Because `dsh-tui`'s `package.json` declares `dsh.bundle.patch` pointing at `cordis.patch.yml`, the package joins the profile's `dsh.profile.bundles` layer stack.
+A `dsh` profile is a stack of bundle patch layers under `~/.dsh/profiles/<name>`. Installing a package into a profile (`dsh plugin --profile tui add dsh-tui-cli`) forwards to pnpm in that profile directory. Because `dsh-tui-cli`'s `package.json` declares `dsh.bundle.patch` pointing at `cordis.patch.yml`, the package joins the profile's `dsh.profile.bundles` layer stack.
 
 `cordis.patch.yml` is a flattened patch applied in order over the profile root:
 

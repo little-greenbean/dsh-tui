@@ -70,7 +70,7 @@ function ensureHeadlessBundle() {
 // back to the GitHub URL until the npm package is published.
 function bootstrap() {
   console.log(`dsh-tui: bootstrapping the \`${PROFILE}\` profile (first run)...`);
-  const code = tryRun('dsh', ['plugin', '--profile', PROFILE, 'add', 'dsh-tui']);
+  const code = tryRun('dsh', ['plugin', '--profile', PROFILE, 'add', 'dsh-tui-cli']);
   if (code !== 0) {
     console.log('dsh-tui: npm package not found yet — installing from GitHub...');
     run('dsh', ['plugin', '--profile', PROFILE, 'add', 'github:little-greenbean/dsh-tui']);

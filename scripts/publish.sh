@@ -12,5 +12,5 @@ fi
 echo "→ publishing..."
 npm publish --registry=https://registry.npmjs.org
 VERSION="$(node -p 'require("./package.json").version')"
-echo "✓ published dsh-tui@${VERSION}"
-echo "  users can now run:  npm install -g dsh-tui && dsh-tui"
+echo "✓ published dsh-tui-cli@${VERSION}"
+echo "  users can now run:  npm install -g dsh-tui-cli && dsh-tui"
